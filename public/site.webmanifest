@@ -1,0 +1,18 @@
+{
+  "name": "Wilfried Musanzi Portfolio",
+  "short_name": "Musanzi",
+  "description": "Wilfried Musanzi's portfolio, Fullstack Web Developer building Angular & NestJS business platforms.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d1412",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

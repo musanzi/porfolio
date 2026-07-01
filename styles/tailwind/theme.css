@@ -1,0 +1,13 @@
+/* -------------------------------------------------------------------------- */
+/* Main theme configuration                                                   */
+/* -------------------------------------------------------------------------- */
+@theme {
+  /* Font family */
+  --font-sans: Geist, system-ui;
+  --font-sans--font-feature-settings: 'salt';
+
+  --font-display: Geist, system-ui;
+  --font-display--font-feature-settings: 'salt';
+
+  --font-mono: 'Geist Mono', ui-monospace;
+}
