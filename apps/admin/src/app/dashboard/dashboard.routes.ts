@@ -22,6 +22,21 @@ export const dashboardRoutes: Route[] = [
     loadComponent: () => import('./features/tags/pages/tags/tags').then((c) => c.Tags)
   },
   {
+    path: 'articles',
+    title: 'Articles',
+    loadComponent: () => import('./features/articles/pages/articles/articles').then((c) => c.Articles)
+  },
+  {
+    path: 'articles/new',
+    title: 'Create article',
+    loadComponent: () => import('./features/articles/pages/article-form/article-form').then((c) => c.ArticleForm)
+  },
+  {
+    path: 'articles/:id/edit',
+    title: 'Edit article',
+    loadComponent: () => import('./features/articles/pages/article-form/article-form').then((c) => c.ArticleForm)
+  },
+  {
     path: 'projects',
     title: 'Projects',
     loadComponent: () => import('./features/projects/pages/projects/projects').then((c) => c.Projects)

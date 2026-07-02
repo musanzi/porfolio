@@ -38,7 +38,7 @@ export const ProjectsStore = signalStore(
           projectsService.findOne(projectId).pipe(
             tap((project) => patchState(store, { project })),
             catchError((error: Error) => {
-              patchState(store, { error: getApiErrorMessage(error, "Unable to load the project") });
+              patchState(store, { error: getApiErrorMessage(error, 'Unable to load the project') });
               return of(null);
             }),
             finalize(() => patchState(store, { isLoading: false }))
@@ -52,8 +52,8 @@ export const ProjectsStore = signalStore(
         exhaustMap((query) =>
           projectsService.findAll(query).pipe(
             tap((data) => patchState(store, { data })),
-            catchError((error: Error) => {
-              patchState(store, { error: getApiErrorMessage(error, "Unable to load projects") });
+            catchError(() => {
+              patchState(store, { data: [[], 0] });
               return of(null);
             }),
             finalize(() => patchState(store, { isLoading: false }))
@@ -73,11 +73,11 @@ export const ProjectsStore = signalStore(
 
               patchState(store, {
                 data: [nextProjects, wasDeleted ? decrementTotal(total) : total],
-                success: "Project deleted."
+                success: 'Project deleted.'
               });
             }),
             catchError((error: Error) => {
-              patchState(store, { error: getApiErrorMessage(error, "Unable to delete the project") });
+              patchState(store, { error: getApiErrorMessage(error, 'Unable to delete the project') });
               return of(null);
             })
           )
@@ -102,7 +102,7 @@ export const ProjectsStore = signalStore(
                       patchState(store, {
                         error: getApiErrorMessage(
                           error,
-                          "Project saved, but the image could not be uploaded. Try replacing the image again."
+                          'Project saved, but the image could not be uploaded. Try replacing the image again.'
                         )
                       });
                       return of({ project: savedProject, uploadFailed: true });
@@ -120,9 +120,12 @@ export const ProjectsStore = signalStore(
                   : projects.filter((item) => item.id !== projectId);
 
                 patchState(store, {
-                  data: [nextProjects, projectExists && !matchesProjectQuery(project, query) ? decrementTotal(total) : total],
+                  data: [
+                    nextProjects,
+                    projectExists && !matchesProjectQuery(project, query) ? decrementTotal(total) : total
+                  ],
                   project,
-                  success: uploadFailed ? null : "Project updated."
+                  success: uploadFailed ? null : 'Project updated.'
                 });
 
                 return;
@@ -131,7 +134,7 @@ export const ProjectsStore = signalStore(
               patchState(store, {
                 data: matchesProjectQuery(project, query) ? [[project, ...projects], total + 1] : [projects, total],
                 project,
-                success: uploadFailed ? null : "Project created."
+                success: uploadFailed ? null : 'Project created.'
               });
             }),
             catchError((error: Error) => {

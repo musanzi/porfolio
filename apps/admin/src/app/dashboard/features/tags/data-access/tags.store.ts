@@ -35,8 +35,8 @@ export const TagsStore = signalStore(
         exhaustMap((query) =>
           tagsService.findAll(query).pipe(
             tap((data) => patchState(store, { data })),
-            catchError((error: Error) => {
-              patchState(store, { error: getApiErrorMessage(error, 'Unable to load tags') });
+            catchError(() => {
+              patchState(store, { data: [[], 0] });
               return of(null);
             }),
             finalize(() => patchState(store, { isLoading: false }))

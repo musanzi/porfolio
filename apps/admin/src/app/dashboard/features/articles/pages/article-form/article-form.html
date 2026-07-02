@@ -1,0 +1,161 @@
+<section class="flex flex-col gap-6 p-4 sm:p-6 lg:p-8">
+  <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-on-surface">{{ isEdit() ? 'Edit article' : 'Create article' }}</h1>
+      <p class="mt-1 text-sm text-on-surface-variant">
+        {{ isEdit() ? 'Update MDX article content, tags, and cover.' : 'Create a new MDX article.' }}
+      </p>
+    </div>
+
+    <a matButton="outlined" routerLink="/articles">
+      <mat-icon svgIcon="arrow-left" />
+      Back to articles
+    </a>
+  </div>
+
+  @if (articlesStore.isLoading()) {
+  <mat-card appearance="filled" aria-busy="true" aria-label="Loading article form">
+    <mat-card-content class="grid gap-6 p-6">
+      <div class="h-8 w-48 animate-pulse rounded-full bg-neutral-300 dark:bg-neutral-600"></div>
+      <div class="h-14 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700"></div>
+      <div class="h-28 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700"></div>
+      <div class="h-80 animate-pulse rounded bg-neutral-200 dark:bg-neutral-700"></div>
+    </mat-card-content>
+  </mat-card>
+  } @else {
+  <form class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]" novalidate (submit)="save($event)">
+    <mat-card appearance="filled">
+      <mat-card-header>
+        <div class="flex items-center gap-x-2">
+          <mat-icon class="size-4" svgIcon="newspaper" />
+          <div class="font-medium tracking-tight">Article details</div>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content class="grid gap-5">
+        <mat-form-field>
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            autocomplete="off"
+            cdkFocusInitial
+            name="title"
+            required
+            [ngModel]="articleModel().title"
+            (ngModelChange)="updateTitle($event)"
+            #titleField="ngModel" />
+          @if (titleField.invalid && (titleField.touched || titleField.dirty)) {
+          <mat-error>Enter an article title.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Summary</mat-label>
+          <textarea
+            matInput
+            class="min-h-28 resize-y"
+            name="summary"
+            required
+            [ngModel]="articleModel().summary"
+            (ngModelChange)="updateSummary($event)"
+            #summaryField="ngModel"></textarea>
+          @if (summaryField.invalid && (summaryField.touched || summaryField.dirty)) {
+          <mat-error>Enter an article summary.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-divider />
+
+        <mat-form-field>
+          <mat-label>Content</mat-label>
+          <textarea
+            matInput
+            class="min-h-96 resize-y font-mono text-sm"
+            name="content"
+            required
+            spellcheck="false"
+            [ngModel]="articleModel().content"
+            (ngModelChange)="updateContent($event)"
+            #contentField="ngModel"></textarea>
+          @if (contentField.invalid && (contentField.touched || contentField.dirty)) {
+          <mat-error>Enter article content.</mat-error>
+          }
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="grid content-start gap-6">
+      <mat-card appearance="filled">
+        <mat-card-header>
+          <div class="flex items-center gap-x-2">
+            <mat-icon class="size-4" svgIcon="settings-2" />
+            <div class="font-medium tracking-tight">Publishing</div>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content class="grid gap-5">
+          <mat-slide-toggle
+            [checked]="articleModel().published"
+            [disabled]="articlesStore.isSaving()"
+            (change)="updatePublished($event.checked)">
+            Published
+          </mat-slide-toggle>
+
+          <mat-form-field>
+            <mat-label>Tags</mat-label>
+            <mat-select
+              multiple
+              [ngModel]="articleModel().tagIds"
+              name="tagIds"
+              (ngModelChange)="updateTagIds($event)">
+              @for (tag of tagsStore.tags(); track tag.id) {
+              <mat-option [value]="tag.id">{{ tag.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="filled">
+        <mat-card-header>
+          <div class="flex items-center gap-x-2">
+            <mat-icon class="size-4" svgIcon="image" />
+            <div class="font-medium tracking-tight">Cover</div>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content class="grid gap-4">
+          <div
+            class="flex aspect-video items-center justify-center overflow-hidden rounded border border-neutral-200 bg-neutral-100 text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400">
+            @if (displayCoverUrl(); as coverUrl) {
+            <img class="size-full object-cover" [src]="coverUrl" alt="Article cover preview" />
+            } @else {
+            <mat-icon class="size-10" svgIcon="image" />
+            }
+          </div>
+
+          <div class="text-sm text-on-surface-variant">
+            Uploading a new cover replaces the current article cover.
+          </div>
+
+          <input #coverInput class="hidden" type="file" accept="image/*" (change)="chooseCover($event)" />
+          <button matButton="outlined" type="button" [disabled]="articlesStore.isSaving()" (click)="coverInput.click()">
+            <mat-icon svgIcon="upload" />
+            {{ coverFile() ? 'Change selected cover' : 'Choose cover' }}
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card appearance="filled">
+        <mat-card-content class="flex flex-col gap-3">
+          <button matButton="filled" type="submit" [disabled]="formInvalid() || articlesStore.isSaving()">
+            <mat-icon svgIcon="save" />
+            {{ articlesStore.isSaving() ? 'Saving...' : isEdit() ? 'Save article' : 'Create article' }}
+          </button>
+          <a matButton="outlined" routerLink="/articles">Cancel</a>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </form>
+  }
+</section>
