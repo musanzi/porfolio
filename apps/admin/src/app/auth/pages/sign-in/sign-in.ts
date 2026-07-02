@@ -18,8 +18,8 @@ export class AuthSignIn {
   protected successMessage = signal<string | null>(this.getSuccessMessage());
 
   protected signInFormModel = signal({
-    email: 'admin@admin.com',
-    password: 'musanzi.2002'
+    email: '',
+    password: ''
   });
   protected signInForm = form(this.signInFormModel, (form) => {
     required(form.email, { message: 'You must enter an email address' });
