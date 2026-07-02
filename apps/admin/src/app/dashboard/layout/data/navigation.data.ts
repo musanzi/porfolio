@@ -25,6 +25,12 @@ export const NAVIGATION: INavigationItem[] = [
         icon: 'users'
       },
       {
+        id: 'tags',
+        label: 'Tags',
+        route: '/tags',
+        icon: 'tags'
+      },
+      {
         id: 'projects',
         label: 'Projects',
         route: '/projects',

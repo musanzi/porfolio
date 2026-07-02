@@ -17,6 +17,11 @@ export const dashboardRoutes: Route[] = [
     loadComponent: () => import('./features/users/pages/users/users').then((c) => c.Users)
   },
   {
+    path: 'tags',
+    title: 'Tags',
+    loadComponent: () => import('./features/tags/pages/tags/tags').then((c) => c.Tags)
+  },
+  {
     path: 'projects',
     title: 'Projects',
     loadComponent: () => import('./features/projects/pages/projects/projects').then((c) => c.Projects)
