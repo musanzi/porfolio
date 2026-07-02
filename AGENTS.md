@@ -2,7 +2,7 @@
 
 ### General
 
-When creating a UI element, make sure it supports light and dark mode, has EN and FR translation support, and uses Angular Material UI elements.
+When creating a UI element, make sure it supports light and dark mode and uses Angular Material UI elements.
 
 ### Folder structure
 

@@ -13,7 +13,7 @@ export class PageTitleStrategy extends TitleStrategy {
   override updateTitle(routerState: RouterStateSnapshot) {
     const title = this.buildTitle(routerState);
     if (title !== undefined) {
-      this.title.setTitle(`Admin | ${title}`);
+      this.title.setTitle(`Musanzi's admin | ${title}`);
     }
   }
 }

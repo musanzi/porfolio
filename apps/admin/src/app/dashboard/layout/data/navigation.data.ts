@@ -23,6 +23,13 @@ export const NAVIGATION: INavigationItem[] = [
         label: 'Users',
         route: '/users',
         icon: 'users'
+      },
+      {
+        id: 'projects',
+        label: 'Projects',
+        route: '/projects',
+        icon: 'app-window',
+        activeOptions: { exact: false }
       }
     ]
   },
