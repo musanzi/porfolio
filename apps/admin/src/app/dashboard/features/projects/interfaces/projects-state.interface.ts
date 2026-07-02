@@ -1,4 +1,4 @@
-import { IProject } from './project.interface';
+import { IProject } from '@libs/utils';
 
 export interface IProjectsState {
   data: [IProject[], number];

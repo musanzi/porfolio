@@ -1,4 +1,4 @@
-import { IArticle } from './article.interface';
+import { IArticle } from '@libs/utils';
 
 export interface IArticlesState {
   article: IArticle | null;

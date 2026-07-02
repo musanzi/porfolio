@@ -1,4 +1,4 @@
-import { IProjectLink } from './project-link.interface';
+import { IProjectLink } from '@libs/utils';
 
 export interface IProjectPayload {
   name: string;

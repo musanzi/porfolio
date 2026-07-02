@@ -1,9 +1,9 @@
 import { computed, inject } from '@angular/core';
-import { decrementTotal, getApiErrorMessage } from '@libs/utils';
+import { getApiErrorMessage } from '@libs/utils';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, exhaustMap, finalize, map, of, pipe, switchMap, tap } from 'rxjs';
-import { IArticle, IArticleQuery, IArticlesState, IDeleteArticlePayload, ISaveArticlePayload } from '../interfaces';
+import { IArticleQuery, IArticlesState, IDeleteArticlePayload, ISaveArticlePayload } from '../interfaces';
 import { ArticlesService } from './articles.service';
 
 const initialState: IArticlesState = {
@@ -14,23 +14,6 @@ const initialState: IArticlesState = {
   isSaving: false,
   success: null
 };
-
-function matchesArticleQuery(article: IArticle, query?: IArticleQuery): boolean {
-  const search = query?.q?.toString().trim().toLowerCase();
-  const matchesSearch =
-    !search ||
-    article.title.toLowerCase().includes(search) ||
-    article.summary.toLowerCase().includes(search) ||
-    article.content?.toLowerCase().includes(search);
-  const matchesTag = !query?.tagId || article.tags.some((tag) => tag.id === query.tagId);
-  const matchesStatus =
-    !query?.status ||
-    query.status === 'all' ||
-    (query.status === 'published' && article.published) ||
-    (query.status === 'draft' && !article.published);
-
-  return Boolean(matchesSearch && matchesTag && matchesStatus);
-}
 
 export const ArticlesStore = signalStore(
   withState(initialState),
@@ -80,10 +63,9 @@ export const ArticlesStore = signalStore(
             tap(() => {
               const [articles, total] = store.data();
               const nextArticles = articles.filter((article) => article.id !== articleId);
-              const wasDeleted = nextArticles.length !== articles.length;
 
               patchState(store, {
-                data: [nextArticles, wasDeleted ? decrementTotal(total) : total],
+                data: [nextArticles, total - 1],
                 success: 'Article deleted.'
               });
             }),
@@ -98,12 +80,12 @@ export const ArticlesStore = signalStore(
     saveArticle: rxMethod<ISaveArticlePayload>(
       pipe(
         tap(() => patchState(store, { error: null, isSaving: true, success: null })),
-        exhaustMap(({ articleId, cover, payload, query }) => {
+        exhaustMap(({ articleId, cover, payload }) => {
           const request = articleId ? articlesService.update(articleId, payload) : articlesService.create(payload);
 
           return request.pipe(
-            switchMap((savedArticle) =>
-              cover
+            switchMap((savedArticle) => {
+              return cover
                 ? articlesService.uploadCover(savedArticle.id, cover).pipe(
                     map((articleWithCover) => ({
                       article: articleWithCover,
@@ -119,23 +101,15 @@ export const ArticlesStore = signalStore(
                       return of({ article: savedArticle, uploadFailed: true });
                     })
                   )
-                : of({ article: savedArticle, uploadFailed: false })
-            ),
+                : of({ article: savedArticle, uploadFailed: false });
+            }),
             tap(({ article, uploadFailed }) => {
               const [articles, total] = store.data();
 
               if (articleId) {
-                const articleExists = articles.some((item) => item.id === articleId);
-                const nextArticles = matchesArticleQuery(article, query)
-                  ? articles.map((item) => (item.id === articleId ? article : item))
-                  : articles.filter((item) => item.id !== articleId);
-
                 patchState(store, {
                   article,
-                  data: [
-                    nextArticles,
-                    articleExists && !matchesArticleQuery(article, query) ? decrementTotal(total) : total
-                  ],
+                  data: [articles.map((item) => (item.id === articleId ? article : item)), total],
                   success: uploadFailed ? null : 'Article updated.'
                 });
 
@@ -144,7 +118,7 @@ export const ArticlesStore = signalStore(
 
               patchState(store, {
                 article,
-                data: matchesArticleQuery(article, query) ? [[article, ...articles], total + 1] : [articles, total],
+                data: [[article, ...articles], total + 1],
                 success: uploadFailed ? null : 'Article created.'
               });
             }),

@@ -11,9 +11,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TagsStore } from '@admin/app/dashboard/features/tags/data-access';
-import { MAX_LIMIT } from '@libs/utils';
+import { IArticle, MAX_LIMIT } from '@libs/utils';
 import { ArticlesStore } from '../../data-access';
-import { IArticle, IArticleForm, IArticlePayload } from '../../interfaces';
+import { IArticleForm, IArticlePayload } from '../../interfaces';
 import { getArticleCoverUrl } from '../../utils';
 
 @Component({

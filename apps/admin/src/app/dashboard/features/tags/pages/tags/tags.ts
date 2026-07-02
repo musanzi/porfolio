@@ -12,10 +12,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ConfirmDialog } from '@admin/app/dashboard/ui/confirm-dialog/confirm-dialog';
-import { DEFAULT_LIMIT, MAX_LIMIT } from '@libs/utils';
+import { DEFAULT_LIMIT, ITag, MAX_LIMIT } from '@libs/utils';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { TagsStore } from '../../data-access';
-import { ITag, ITagPayload, ITagQuery } from '../../interfaces';
+import { ITagPayload, ITagQuery } from '../../interfaces';
 import { TagFormDialog } from '../../ui/tag-form-dialog/tag-form-dialog';
 
 @Component({
@@ -88,7 +88,7 @@ export class Tags {
           return;
         }
 
-        this.tagsStore.saveTag({ payload, query: this.query });
+        this.tagsStore.saveTag({ payload });
       });
   }
 
@@ -125,7 +125,7 @@ export class Tags {
           return;
         }
 
-        this.tagsStore.saveTag({ payload, query: this.query, tagId: tag.id });
+        this.tagsStore.saveTag({ payload, tagId: tag.id });
       });
   }
 

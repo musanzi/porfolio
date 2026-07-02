@@ -13,10 +13,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { ConfirmDialog } from '@admin/app/dashboard/ui/confirm-dialog/confirm-dialog';
-import { DEFAULT_LIMIT, MAX_LIMIT } from '@libs/utils';
+import { DEFAULT_LIMIT, IProject, MAX_LIMIT } from '@libs/utils';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ProjectsStore } from '../../data-access';
-import { IProject, IProjectQuery } from '../../interfaces';
+import { IProjectQuery } from '../../interfaces';
 import { getProjectImageUrl } from '../../utils';
 
 @Component({

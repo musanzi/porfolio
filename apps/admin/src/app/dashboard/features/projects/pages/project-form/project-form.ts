@@ -8,8 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { IProject, IProjectLink } from '@libs/utils';
 import { ProjectsStore } from '../../data-access';
-import { IProject, IProjectForm, IProjectLink, IProjectPayload } from '../../interfaces';
+import { IProjectForm, IProjectPayload } from '../../interfaces';
 import { getProjectImageUrl } from '../../utils';
 
 @Component({

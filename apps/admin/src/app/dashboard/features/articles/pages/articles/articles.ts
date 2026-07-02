@@ -16,10 +16,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { TagsStore } from '@admin/app/dashboard/features/tags/data-access';
 import { ConfirmDialog } from '@admin/app/dashboard/ui/confirm-dialog/confirm-dialog';
-import { DEFAULT_LIMIT, MAX_LIMIT } from '@libs/utils';
+import { DEFAULT_LIMIT, IArticle, MAX_LIMIT } from '@libs/utils';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ArticlesStore } from '../../data-access';
-import { ArticleStatus, IArticle, IArticleQuery } from '../../interfaces';
+import { ArticleStatus, IArticleQuery } from '../../interfaces';
 import { getArticleCoverUrl } from '../../utils';
 
 @Component({

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { createParams } from '@libs/utils';
+import { createParams, IProject } from '@libs/utils';
 import { Observable } from 'rxjs';
-import { IProject, IProjectPayload, IProjectQuery } from '../interfaces';
+import { IProjectPayload, IProjectQuery } from '../interfaces';
 
 @Service()
 export class ProjectsService {

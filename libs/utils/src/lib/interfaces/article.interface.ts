@@ -1,4 +1,4 @@
-import { ITag } from '../../tags/interfaces';
+import { ITag } from './tag.interface';
 
 export interface IArticle {
   id: string;

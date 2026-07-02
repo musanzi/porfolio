@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { createParams } from '@libs/utils';
+import { createParams, IArticle } from '@libs/utils';
 import { Observable } from 'rxjs';
-import { IArticle, IArticlePayload, IArticleQuery } from '../interfaces';
+import { IArticlePayload, IArticleQuery } from '../interfaces';
 
 @Service()
 export class ArticlesService {

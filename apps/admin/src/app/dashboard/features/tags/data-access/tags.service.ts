@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { createParams } from '@libs/utils';
+import { createParams, ITag } from '@libs/utils';
 import { Observable } from 'rxjs';
-import { ITag, ITagPayload, ITagQuery } from '../interfaces';
+import { ITagPayload, ITagQuery } from '../interfaces';
 
 @Service()
 export class TagsService {

@@ -1,9 +1,9 @@
 import { computed, inject } from '@angular/core';
-import { decrementTotal, getApiErrorMessage } from '@libs/utils';
+import { getApiErrorMessage } from '@libs/utils';
 import { patchState, signalStore, withComputed, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, exhaustMap, finalize, map, of, pipe, switchMap, tap } from 'rxjs';
-import { IDeleteProjectPayload, IProject, IProjectQuery, IProjectsState, ISaveProjectPayload } from '../interfaces';
+import { IDeleteProjectPayload, IProjectQuery, IProjectsState, ISaveProjectPayload } from '../interfaces';
 import { ProjectsService } from './projects.service';
 
 const initialState: IProjectsState = {
@@ -14,12 +14,6 @@ const initialState: IProjectsState = {
   project: null,
   success: null
 };
-
-function matchesProjectQuery(project: IProject, query?: IProjectQuery): boolean {
-  const search = query?.q?.toString().trim().toLowerCase();
-
-  return !search || project.name.toLowerCase().includes(search) || project.summary.toLowerCase().includes(search);
-}
 
 export const ProjectsStore = signalStore(
   withState(initialState),
@@ -69,10 +63,9 @@ export const ProjectsStore = signalStore(
             tap(() => {
               const [projects, total] = store.data();
               const nextProjects = projects.filter((project) => project.id !== projectId);
-              const wasDeleted = nextProjects.length !== projects.length;
 
               patchState(store, {
-                data: [nextProjects, wasDeleted ? decrementTotal(total) : total],
+                data: [nextProjects, total - 1],
                 success: 'Project deleted.'
               });
             }),
@@ -87,12 +80,12 @@ export const ProjectsStore = signalStore(
     saveProject: rxMethod<ISaveProjectPayload>(
       pipe(
         tap(() => patchState(store, { error: null, isSaving: true, success: null })),
-        exhaustMap(({ image, payload, projectId, query }) => {
+        exhaustMap(({ image, payload, projectId }) => {
           const request = projectId ? projectsService.update(projectId, payload) : projectsService.create(payload);
 
           return request.pipe(
-            switchMap((savedProject) =>
-              image
+            switchMap((savedProject) => {
+              return image
                 ? projectsService.uploadImage(savedProject.id, image).pipe(
                     map((projectWithImage) => ({
                       project: projectWithImage,
@@ -108,22 +101,14 @@ export const ProjectsStore = signalStore(
                       return of({ project: savedProject, uploadFailed: true });
                     })
                   )
-                : of({ project: savedProject, uploadFailed: false })
-            ),
+                : of({ project: savedProject, uploadFailed: false });
+            }),
             tap(({ project, uploadFailed }) => {
               const [projects, total] = store.data();
 
               if (projectId) {
-                const projectExists = projects.some((item) => item.id === projectId);
-                const nextProjects = matchesProjectQuery(project, query)
-                  ? projects.map((item) => (item.id === projectId ? project : item))
-                  : projects.filter((item) => item.id !== projectId);
-
                 patchState(store, {
-                  data: [
-                    nextProjects,
-                    projectExists && !matchesProjectQuery(project, query) ? decrementTotal(total) : total
-                  ],
+                  data: [projects.map((item) => (item.id === projectId ? project : item)), total],
                   project,
                   success: uploadFailed ? null : 'Project updated.'
                 });
@@ -132,7 +117,7 @@ export const ProjectsStore = signalStore(
               }
 
               patchState(store, {
-                data: matchesProjectQuery(project, query) ? [[project, ...projects], total + 1] : [projects, total],
+                data: [[project, ...projects], total + 1],
                 project,
                 success: uploadFailed ? null : 'Project created.'
               });
